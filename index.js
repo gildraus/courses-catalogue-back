@@ -14,11 +14,17 @@ const bcrypt = require("bcrypt");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
 
+const corsOptions = {
+  origin: 'https://courses-catalogue-frontend.vercel.app',
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+};
+
 //Middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 //Root route
 app.get("/", (req, res) => {
