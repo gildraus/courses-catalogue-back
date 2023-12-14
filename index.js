@@ -161,12 +161,13 @@ router.route("/modules").get((req, res) => {
     });
 });
 
-router.route("/levesofstudy").get((req, res) => {
+router.route("/levelsofstudy").get((req, res) => {
   console.log("radi levelsofstudy");
   LevelOfStudy.find({})
     .exec()
     .then((levelsOfStudy) => {
       res.json(levelsOfStudy);
+      console.log(levelsOfStudy);
     })
     .catch((err) => {
       console.log(err);

@@ -25,6 +25,6 @@ let LevelOfStudySchema = new Schema({
   ],
 });
 
-const LevelOfStudyModel = mongoose.model("LevelOfStudy", LevelOfStudySchema, "levelsOfStudy");
+const LevelOfStudyModel = mongoose.model("LevelOfStudy", LevelOfStudySchema, "levelOfStudy");
 
 module.exports = LevelOfStudyModel;
