@@ -2,6 +2,7 @@ const Course = require("./models/course");
 const Department = require("./models/department");
 const Module = require("./models/module");
 const User = require("./models/user");
+const LevelOfStudy = require("./models/levelOfStudy");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const express = require("express");
@@ -15,9 +16,9 @@ const authToken = require("./authentication/authenticateToken");
 const app = express();
 
 const corsOptions = {
-  origin: 'https://courses-catalogue-frontend.vercel.app',
-  methods: 'GET,POST,PUT,DELETE',
-  allowedHeaders: 'Content-Type,Authorization'
+  origin: "https://courses-catalogue-frontend.vercel.app",
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
 };
 
 //Middleware
@@ -125,100 +126,14 @@ router.route("/filteredCourses").get(async (req, res) => {
     }
   }
 
-  // if (selectedStudies) {
-  //   query.studies = { $regex: selectedStudies, $options: "i" };
-  // }
-  // if (selectedModule) {
-  //   query.modules = { $regex: selectedModule, $options: "i" };
-  // }
-  // if (selectedSemester) {
-  //   query.semester = { $regex: selectedSemester, $options: "i" };
-  // }
-  // if (selectedYearOfStudy) {
-  //   query.year_of_study = { $regex: selectedYearOfStudy, $options: "i" };
-  // }
-  // if (selectedDepartments) {
-  //   query.departments = { $regex: selectedDepartments, $options: "i" };
-  // }
-  // console.log(
-  //   selectedAccreditation +
-  //     " " +
-  //     selectedLevelOfStudy +
-  //     " " +
-  //     selectedStudies +
-  //     " " +
-  //     selectedModule +
-  //     " " +
-  //     selectedSemester +
-  //     " " +
-  //     selectedYearOfStudy +
-  //     " " +
-  //     selectedDepartments
-  // );
   try {
     const courses = await Course.find(query).exec();
 
     res.json(courses);
   } catch (err) {
     console.error(err);
-    // Handle the error
   }
 });
-
-// router.route("/filteredCourses").get(async (req, res) => {
-//   const {
-//     selectedSemester,
-//     selectedTag,
-//     selectedAccreditation,
-//     selectedLevelOfStudy,
-//     selectedStudies,
-//     selectedModule,
-//     selectedDepartment,
-//     selectedYearOfStudy,
-//   } = req.query;
-
-//   const query = {};
-
-//   if (selectedSemester) {
-//     query.semester = { $regex: selectedSemester, $options: "i" };
-//   }
-
-//   if (selectedTag) {
-//     query.tags = { $regex: selectedTag, $options: "i" };
-//   }
-
-//   if (selectedAccreditation) {
-//     query.accreditation = { $regex: selectedAccreditation, $options: "i" };
-//   }
-
-//   if (selectedLevelOfStudy) {
-//     query.level_of_study = { $regex: selectedLevelOfStudy, $options: "i" };
-//   }
-
-//   if (selectedStudies) {
-//     query.studies = { $regex: selectedStudies, $options: "i" };
-//   }
-
-//   if (selectedModule) {
-//     query.modules = { $regex: selectedModule, $options: "i" };
-//   }
-
-//   if (selectedDepartment) {
-//     query.departments = { $regex: selectedDepartment, $options: "i" };
-//   }
-
-//   if (selectedYearOfStudy) {
-//     query.year_of_study = { $regex: selectedYearOfStudy, $options: "i" };
-//   }
-
-//   try {
-//     const courses = await Course.find(query).exec();
-//     res.json(courses);
-//   } catch (err) {
-//     console.error(err);
-//     // Handle the error
-//   }
-// });
 
 router.route("/departments").get((req, res) => {
   console.log("radi");
@@ -243,6 +158,19 @@ router.route("/modules").get((req, res) => {
     .catch((err) => {
       console.log(err);
       res.status(500).send("Error occurred while fetching modules");
+    });
+});
+
+router.route("/levesofstudy").get((req, res) => {
+  console.log("radi levelsofstudy");
+  LevelOfStudy.find({})
+    .exec()
+    .then((levelsOfStudy) => {
+      res.json(levelsOfStudy);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Error occured while fetching levelsOfStudy");
     });
 });
 
@@ -341,7 +269,6 @@ router.route("/login").post(async (req, res) => {
       return res.status(401).json({ error: "Invalid username" });
     }
 
-    // Compare the provided password directly with the stored password
     if (password === user.password) {
       const token = jwt.sign({ userId: user._id }, "your-secret-key", {
         expiresIn: "1h",
