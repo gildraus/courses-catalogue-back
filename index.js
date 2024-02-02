@@ -16,7 +16,7 @@ const authToken = require("./authentication/authenticateToken");
 const app = express();
 
 const corsOptions = {
-  origin: "https://courses-catalogue-frontend.vercel.app",
+  origin: "https://courses-catalogue-front.vercel.app",
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
