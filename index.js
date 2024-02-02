@@ -16,10 +16,11 @@ const authToken = require("./authentication/authenticateToken");
 const app = express();
 
 const corsOptions = {
-  origin: "https://courses-catalogue-frontend.vercel.app",
+  origin: "*",
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
+
 
 //Middleware
 app.use(bodyParser.json());
