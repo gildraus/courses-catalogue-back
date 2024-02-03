@@ -14,6 +14,7 @@ const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
 
+//  ovo sam sve premestio u vercel.json trebalo bi da radi tamo
 // const corsOptions = {
 //   origin: ["https://courses-catalogue-front.vercel.app", "http://localhost:3000"],
 //   methods: "GET,POST,PUT,DELETE",
