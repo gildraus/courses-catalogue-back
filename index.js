@@ -11,7 +11,6 @@ const cookieParser = require("cookie-parser");
 const authenticateToken = require("./authentication/authController");
 
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
 
