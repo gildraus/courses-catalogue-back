@@ -14,10 +14,17 @@ const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
 
+// const corsOptions = {
+//   origin: "https://courses-catalogue-front.vercel.app",
+//   methods: "GET,POST,PUT,DELETE",
+//   allowedHeaders: "Content-Type,Authorization",
+// };
+
+//proba
 const corsOptions = {
   origin: "https://courses-catalogue-front.vercel.app",
   methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type,Authorization",
+  exposedHeaders: "Content-Type,Authorization",
 };
 
 //Middleware
