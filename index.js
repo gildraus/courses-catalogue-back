@@ -14,18 +14,12 @@ const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
 
-// const corsOptions = {
-//   origin: "https://courses-catalogue-front.vercel.app",
-//   methods: "GET,POST,PUT,DELETE",
-//   allowedHeaders: "Content-Type,Authorization",
-// };
-
-//proba
 const corsOptions = {
-  origin: "https://courses-catalogue-front.vercel.app",
+  origin: ["https://courses-catalogue-front.vercel.app", "http://localhost:3000"],
   methods: "GET,POST,PUT,DELETE",
-  exposedHeaders: "Content-Type,Authorization",
+  allowedHeaders: "Content-Type,Authorization",
 };
+
 
 //Middleware
 app.use(bodyParser.json());
@@ -418,5 +412,8 @@ router
       res.status(500).json({ error: "Server error" });
     }
   });
-
+  router.route("/test").get((req, res) => {
+    console.log("radi test");
+    res.json("test radi");
+  });
 app.use("/", router);
