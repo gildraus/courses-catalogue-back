@@ -15,18 +15,18 @@ const authToken = require("./authentication/authenticateToken");
 const app = express();
 
 //  ovo sam sve premestio u vercel.json trebalo bi da radi tamo
-// const corsOptions = {
-//   origin: ["https://courses-catalogue-front.vercel.app", "http://localhost:3000"],
-//   methods: "GET,POST,PUT,DELETE",
-//   allowedHeaders: "Content-Type,Authorization",
-// };
+const corsOptions = {
+  origin: ["https://courses-catalogue-front.vercel.app", "http://localhost:3000"],
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+};
 
 
 //Middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 //Root route
 app.get("/", (req, res) => {
