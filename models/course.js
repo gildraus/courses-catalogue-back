@@ -6,34 +6,31 @@ let Course = new Schema({
   course_id: {
     type: String,
   },
-  accreditation: {
-    type: String,
-  },
 
   name: {
-    type: String,
-  },
-  semester: {
     type: String,
   },
   level_of_study: {
     type: String,
   },
-  studies: {
-    type: [String],
-    default: [],
+  program: {
+    type: String,
   },
   modules: {
     type: [String],
     default: [],
   },
+
+  semester: {
+    type: String,
+  },
+
   departments: {
     type: [String],
     default: [],
   },
   year_of_study: {
     type: [String],
-    default: [],
   },
 
   lecturers: {
@@ -44,21 +41,6 @@ let Course = new Schema({
   espb: {
     type: String,
   },
-  periodicity: {
-    type: String,
-  },
-
-  type_of_exam: {
-    type: String,
-  },
-  type_of_lecture: {
-    type: String,
-  },
-
-  preconditions: {
-    type: [String],
-    default: [],
-  },
 
   lecture_session_time: {
     type: [String],
@@ -67,16 +49,6 @@ let Course = new Schema({
   exercise_session_time: {
     type: [String],
     default: [],
-  },
-
-  abstract: {
-    type: String,
-  },
-  objective: {
-    type: String,
-  },
-  content: {
-    type: String,
   },
 
   literature: {
@@ -90,19 +62,20 @@ let Course = new Schema({
   video: {
     type: String,
   },
-  tags: {
-    type: [String],
-  },
-  note: {
+  description: {
     type: String,
   },
-  restrictions: {
+  content: {
+    type: String,
+  },
+  tags: {
     type: [String],
     default: [],
   },
+
   status: {
     type: String,
   },
 });
 
-module.exports = mongoose.model("Course", Course, "courses3.0");
+module.exports = mongoose.model("Course", Course, "courses6.0");

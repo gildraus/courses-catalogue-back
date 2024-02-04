@@ -64,11 +64,12 @@ router.route("/courses").get((req, res) => {
       res.status(500).send("Error occurred while fetching courses");
     });
 });
+
+
 router.route("/filteredCourses").get(async (req, res) => {
   const {
-    selectedAccreditation,
     selectedLevelOfStudy,
-    selectedStudies,
+    selectedProgram,
     selectedModule,
     selectedSemester,
     selectedYearOfStudy,
@@ -76,9 +77,7 @@ router.route("/filteredCourses").get(async (req, res) => {
   } = req.query;
 
   const query = {};
-  if (selectedAccreditation) {
-    query.accreditation = { $regex: selectedAccreditation, $options: "i" };
-  }
+
   if (selectedLevelOfStudy) {
     if (Array.isArray(selectedLevelOfStudy)) {
       query.level_of_study = { $in: selectedLevelOfStudy };
@@ -87,11 +86,11 @@ router.route("/filteredCourses").get(async (req, res) => {
     }
   }
 
-  if (selectedStudies) {
-    if (Array.isArray(selectedStudies)) {
-      query.studies = { $in: selectedStudies };
+  if (selectedProgram) {
+    if (Array.isArray(selectedProgram)) {
+      query.program = { $in: selectedProgram };
     } else {
-      query.studies = { $regex: selectedStudies, $options: "i" };
+      query.program = { $regex: selectedProgram, $options: "i" };
     }
   }
 
@@ -103,11 +102,14 @@ router.route("/filteredCourses").get(async (req, res) => {
     }
   }
 
+
   if (selectedSemester) {
-    if (Array.isArray(selectedSemester)) {
-      query.semester = { $in: selectedSemester };
-    } else {
-      query.semester = { $regex: selectedSemester, $options: "i" };
+    if (selectedSemester.includes("летњи") && selectedSemester.includes("зимски")) {
+      //this returns every course
+    } else if (selectedSemester.includes("летњи")) {
+      query.semester = { $in: ["други", "четврти", "шести", "осми"] };
+    } else if (selectedSemester.includes("зимски")) {
+      query.semester = { $in: ["први", "трећи", "пети", "седми"] };
     }
   }
 
@@ -127,100 +129,17 @@ router.route("/filteredCourses").get(async (req, res) => {
     }
   }
 
-  // if (selectedStudies) {
-  //   query.studies = { $regex: selectedStudies, $options: "i" };
-  // }
-  // if (selectedModule) {
-  //   query.modules = { $regex: selectedModule, $options: "i" };
-  // }
-  // if (selectedSemester) {
-  //   query.semester = { $regex: selectedSemester, $options: "i" };
-  // }
-  // if (selectedYearOfStudy) {
-  //   query.year_of_study = { $regex: selectedYearOfStudy, $options: "i" };
-  // }
-  // if (selectedDepartments) {
-  //   query.departments = { $regex: selectedDepartments, $options: "i" };
-  // }
-  // console.log(
-  //   selectedAccreditation +
-  //     " " +
-  //     selectedLevelOfStudy +
-  //     " " +
-  //     selectedStudies +
-  //     " " +
-  //     selectedModule +
-  //     " " +
-  //     selectedSemester +
-  //     " " +
-  //     selectedYearOfStudy +
-  //     " " +
-  //     selectedDepartments
-  // );
   try {
     const courses = await Course.find(query).exec();
-
+    console.log(
+      query.level_of_study + " " + query.program + " " + query.modules
+    );
     res.json(courses);
   } catch (err) {
     console.error(err);
     // Handle the error
   }
 });
-
-// router.route("/filteredCourses").get(async (req, res) => {
-//   const {
-//     selectedSemester,
-//     selectedTag,
-//     selectedAccreditation,
-//     selectedLevelOfStudy,
-//     selectedStudies,
-//     selectedModule,
-//     selectedDepartment,
-//     selectedYearOfStudy,
-//   } = req.query;
-
-//   const query = {};
-
-//   if (selectedSemester) {
-//     query.semester = { $regex: selectedSemester, $options: "i" };
-//   }
-
-//   if (selectedTag) {
-//     query.tags = { $regex: selectedTag, $options: "i" };
-//   }
-
-//   if (selectedAccreditation) {
-//     query.accreditation = { $regex: selectedAccreditation, $options: "i" };
-//   }
-
-//   if (selectedLevelOfStudy) {
-//     query.level_of_study = { $regex: selectedLevelOfStudy, $options: "i" };
-//   }
-
-//   if (selectedStudies) {
-//     query.studies = { $regex: selectedStudies, $options: "i" };
-//   }
-
-//   if (selectedModule) {
-//     query.modules = { $regex: selectedModule, $options: "i" };
-//   }
-
-//   if (selectedDepartment) {
-//     query.departments = { $regex: selectedDepartment, $options: "i" };
-//   }
-
-//   if (selectedYearOfStudy) {
-//     query.year_of_study = { $regex: selectedYearOfStudy, $options: "i" };
-//   }
-
-//   try {
-//     const courses = await Course.find(query).exec();
-//     res.json(courses);
-//   } catch (err) {
-//     console.error(err);
-//     // Handle the error
-//   }
-// });
 
 router.route("/departments").get((req, res) => {
   console.log("radi");
@@ -261,7 +180,7 @@ router.route("/levelsofstudy").get((req, res) => {
       res.status(500).send("Error occured while fetching levelsOfStudy");
     });
 });
-
+//ovo mora opet da se radi jer je previse toga izbaceno
 router.post("/api/courses", authenticateToken, async (req, res) => {
   try {
     const {
@@ -413,8 +332,5 @@ router
       res.status(500).json({ error: "Server error" });
     }
   });
-  router.route("/test").get((req, res) => {
-    console.log("radi test");
-    res.json("test radi");
-  });
+
 app.use("/", router);
