@@ -181,73 +181,127 @@ router.route("/levelsofstudy").get((req, res) => {
     });
 });
 //ovo mora opet da se radi jer je previse toga izbaceno
+// router.post("/api/courses", authenticateToken, async (req, res) => {
+//   try {
+//     const {
+//       courseID,
+//       acc,
+//       semester,
+//       studies,
+//       name,
+//       levelOfStudy,
+//       moduleItems,
+//       departmentItems,
+//       yearOfStudyItems,
+//       status,
+//       espb,
+//       typeOfExam,
+//       typeOfLecture,
+//       lecturerItems,
+//       lectureSessionTimeItems,
+//       exerciseSessionTimeItems,
+//       preconditionItems,
+//       periodicity,
+//       abstract,
+//       content,
+//       objective,
+//       note,
+//       literatureItems,
+//       tagItems,
+//       restrictionItems,
+//       link,
+//       video,
+//     } = req.body;
+//     const course = new Course({
+//       course_id: courseID,
+//       accreditation: acc,
+//       name: name,
+//       semester: semester,
+//       level_of_study: levelOfStudy,
+//       studies: studies,
+//       modules: moduleItems,
+//       departments: departmentItems,
+//       year_of_study: yearOfStudyItems,
+//       lecturers: lecturerItems,
+//       espb: espb,
+//       periodicity: periodicity,
+//       type_of_exam: typeOfExam,
+//       type_of_lecture: typeOfLecture,
+//       preconditions: preconditionItems,
+//       lecture_session_time: lectureSessionTimeItems,
+//       exercise_session_time: exerciseSessionTimeItems,
+//       abstract: abstract,
+//       objective: objective,
+//       content: content,
+//       literature: literatureItems,
+//       link: link,
+//       video: video,
+//       note: note,
+//       tags: tagItems,
+//       restrictions: restrictionItems,
+//       status: status,
+//     });
+//     console.log(course);
+//     await course.save();
+//     res.status(201).json(course);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to save the course" });
+//   }
+// });
+
 router.post("/api/courses", authenticateToken, async (req, res) => {
   try {
     const {
-      courseID,
-      acc,
-      semester,
-      studies,
+      course_id,
       name,
-      levelOfStudy,
-      moduleItems,
-      departmentItems,
-      yearOfStudyItems,
-      status,
-      espb,
-      typeOfExam,
-      typeOfLecture,
-      lecturerItems,
-      lectureSessionTimeItems,
-      exerciseSessionTimeItems,
-      preconditionItems,
-      periodicity,
-      abstract,
-      content,
-      objective,
+      level_of_study,
+      program,
+      modules,
+      semester,
+      departments,
+      year_of_study,
+      lecturers,
+      lecture_session_time,
+      exercise_session_time,
+      description,
       note,
-      literatureItems,
-      tagItems,
-      restrictionItems,
+      literature,
+      tags,
       link,
       video,
+      status
     } = req.body;
+
     const course = new Course({
-      course_id: courseID,
-      accreditation: acc,
-      name: name,
-      semester: semester,
-      level_of_study: levelOfStudy,
-      studies: studies,
-      modules: moduleItems,
-      departments: departmentItems,
-      year_of_study: yearOfStudyItems,
-      lecturers: lecturerItems,
-      espb: espb,
-      periodicity: periodicity,
-      type_of_exam: typeOfExam,
-      type_of_lecture: typeOfLecture,
-      preconditions: preconditionItems,
-      lecture_session_time: lectureSessionTimeItems,
-      exercise_session_time: exerciseSessionTimeItems,
-      abstract: abstract,
-      objective: objective,
-      content: content,
-      literature: literatureItems,
-      link: link,
-      video: video,
-      note: note,
-      tags: tagItems,
-      restrictions: restrictionItems,
-      status: status,
+      course_id,
+      name,
+      level_of_study,
+      program,
+      modules,
+      semester,
+      departments,
+      year_of_study,
+      lecturers,
+      lecture_session_time,
+      exercise_session_time,
+      description,
+      note,
+      literature,
+      tags,
+      link,
+      video,
+      status
     });
+
     console.log(course);
     await course.save();
     res.status(201).json(course);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to save the course" });
   }
 });
+
 
 //tag search
 router.route("/api/tags/:query").get((req, res) => {
