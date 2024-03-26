@@ -248,7 +248,6 @@ router.route("/levelsofstudy").get((req, res) => {
 //     res.status(500).json({ error: "Failed to save the course" });
 //   }
 // });
-
 router.post("/api/courses", authenticateToken, async (req, res) => {
   try {
     const {
@@ -293,14 +292,21 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
       status
     });
 
-    console.log(course);
     await course.save();
-    res.status(201).json(course);
+
+    res.status(201).json({ success: true, course });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to save the course" });
+    console.error("Error saving course:", error);
+    if (error.name === 'ValidationError') {
+      // If validation fails (e.g., required fields are missing), return a 400 Bad Request
+      res.status(400).json({ success: false, error: "Validation failed", details: error.errors });
+    } else {
+      // For other types of errors, return a 500 Internal Server Error
+      res.status(500).json({ success: false, error: "Failed to save the course" });
+    }
   }
 });
+
 
 
 //tag search
