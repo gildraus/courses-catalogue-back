@@ -362,7 +362,7 @@ router
     const courseId = req.params.courseId;
 
     try {
-      const course = await Course.findOne({ course_id: courseId }).exec();
+      const course = await Course.findOne({ _id: courseId }).exec();
 
       if (!course) {
         return res.status(404).json({ error: "Course not found" });
@@ -379,7 +379,7 @@ router
 
     try {
       const deletedCourse = await Course.findOneAndDelete({
-        course_id: courseId,
+        _id: courseId,
       }).exec();
 
       if (!deletedCourse) {
@@ -392,5 +392,6 @@ router
       res.status(500).json({ error: "Server error" });
     }
   });
+
 
 app.use("/", router);
