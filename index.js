@@ -16,11 +16,13 @@ const app = express();
 
 //  ovo sam sve premestio u vercel.json trebalo bi da radi tamo
 const corsOptions = {
-  origin: ["https://courses-catalogue-front.vercel.app", "http://localhost:3000"],
+  origin: [
+    "https://courses-catalogue-front.vercel.app",
+    "http://localhost:3000",
+  ],
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
-
 
 //Middleware
 app.use(bodyParser.json());
@@ -65,7 +67,6 @@ router.route("/courses").get((req, res) => {
     });
 });
 
-
 router.route("/filteredCourses").get(async (req, res) => {
   const {
     selectedLevelOfStudy,
@@ -102,9 +103,11 @@ router.route("/filteredCourses").get(async (req, res) => {
     }
   }
 
-
   if (selectedSemester) {
-    if (selectedSemester.includes("летњи") && selectedSemester.includes("зимски")) {
+    if (
+      selectedSemester.includes("летњи") &&
+      selectedSemester.includes("зимски")
+    ) {
       //this returns every course
     } else if (selectedSemester.includes("летњи")) {
       query.semester = { $in: ["други", "четврти", "шести", "осми"] };
@@ -268,7 +271,7 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
       tags,
       link,
       video,
-      status
+      status,
     } = req.body;
 
     const course = new Course({
@@ -289,7 +292,7 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
       tags,
       link,
       video,
-      status
+      status,
     });
 
     await course.save();
@@ -297,17 +300,23 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
     res.status(201).json({ success: true, course });
   } catch (error) {
     console.error("Error saving course:", error);
-    if (error.name === 'ValidationError') {
+    if (error.name === "ValidationError") {
       // If validation fails (e.g., required fields are missing), return a 400 Bad Request
-      res.status(400).json({ success: false, error: "Validation failed", details: error.errors });
+      res
+        .status(400)
+        .json({
+          success: false,
+          error: "Validation failed",
+          details: error.errors,
+        });
     } else {
       // For other types of errors, return a 500 Internal Server Error
-      res.status(500).json({ success: false, error: "Failed to save the course" });
+      res
+        .status(500)
+        .json({ success: false, error: "Failed to save the course" });
     }
   }
 });
-
-
 
 //tag search
 router.route("/api/tags/:query").get((req, res) => {
@@ -393,5 +402,41 @@ router
     }
   });
 
+router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
+  const courseId = req.params.courseId;
+  const updatedCourseData = req.body;
+
+  try {
+    // Pronalaženje kursa po ID-ju
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({ error: "Kurs nije pronađen." });
+    }
+
+    // Ažuriranje kursa sa novim podacima
+    Object.keys(updatedCourseData).forEach((key) => {
+      course[key] = updatedCourseData[key];
+    });
+
+    // Spajanje stringova za literaturu
+    if (Array.isArray(updatedCourseData.literature)) {
+      course.literature = updatedCourseData.literature.join(", ");
+    }
+
+    // Čuvanje ažuriranog kursa
+    await course.save();
+
+    res.json({ success: true, message: "Kurs uspešno ažuriran." });
+  } catch (error) {
+    console.error("Greška prilikom ažuriranja kursa:", error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        error: "Došlo je do greške prilikom ažuriranja kursa.",
+      });
+  }
+});
 
 app.use("/", router);
