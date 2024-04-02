@@ -439,4 +439,21 @@ router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
   }
 });
 
+router.route("/api/courses/delete").post(async (req, res) => {
+  const { courseIds } = req.body;
+
+  try {
+    const deletedCourses = await Course.deleteMany({ _id: { $in: courseIds } }).exec();
+
+    if (!deletedCourses) {
+      return res.status(404).json({ error: "No courses found" });
+    }
+
+    res.json({ message: "Courses deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.use("/", router);
