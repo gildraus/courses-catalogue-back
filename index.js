@@ -302,13 +302,11 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
     console.error("Error saving course:", error);
     if (error.name === "ValidationError") {
       // If validation fails (e.g., required fields are missing), return a 400 Bad Request
-      res
-        .status(400)
-        .json({
-          success: false,
-          error: "Validation failed",
-          details: error.errors,
-        });
+      res.status(400).json({
+        success: false,
+        error: "Validation failed",
+        details: error.errors,
+      });
     } else {
       // For other types of errors, return a 500 Internal Server Error
       res
@@ -401,49 +399,147 @@ router
       res.status(500).json({ error: "Server error" });
     }
   });
-
 router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
-  const courseId = req.params.courseId;
-  const updatedCourseData = req.body;
+  const courseId = req.params.courseId; // Dobijanje ID-ja kursa iz rute
+  const updatedCourseData = req.body; // Dobijanje ažuriranih podataka o kursu iz tela zahteva
 
   try {
+    // Ispis ažuriranih podataka o kursu u konzolu
+    console.log("Primljena JSON datoteka:", updatedCourseData);
+
     // Pronalaženje kursa po ID-ju
     const course = await Course.findById(courseId);
 
     if (!course) {
+      // Ako kurs nije pronađen, vraćamo odgovor sa statusom 404
       return res.status(404).json({ error: "Kurs nije pronađen." });
     }
 
     // Ažuriranje kursa sa novim podacima
-    Object.keys(updatedCourseData).forEach((key) => {
-      course[key] = updatedCourseData[key];
-    });
-
-    // Spajanje stringova za literaturu
-    if (Array.isArray(updatedCourseData.literature)) {
-      course.literature = updatedCourseData.literature.join(", ");
-    }
+    course.name = updatedCourseData.name;
+    course.semester = updatedCourseData.semester;
+    course.level_of_study = updatedCourseData.levelOfStudy; // Ispravljeno
+    course.program = updatedCourseData.program;
+    course.modules = updatedCourseData.module;
+    course.departments = updatedCourseData.departments;
+    course.year_of_study = updatedCourseData.yearOfStudy;
+    course.lecturers = updatedCourseData.lecturers;
+    course.espb = updatedCourseData.espb;
+    course.lecture_session_time = updatedCourseData.lectureSessionTimes; // Ispravljeno
+    course.exercise_session_time = updatedCourseData.exerciseSessionTimes; // Ispravljeno
+    course.literature = updatedCourseData.literatures; // Ispravljeno
+    course.link = updatedCourseData.link;
+    course.video = updatedCourseData.video;
+    course.description = updatedCourseData.description;
+    course.content = updatedCourseData.content;
+    course.tags = updatedCourseData.tags;
+    course.status = updatedCourseData.status;
 
     // Čuvanje ažuriranog kursa
     await course.save();
 
+    // Ispis uspešnog ažuriranja u konzolu
+    console.log("Kurs uspešno ažuriran:", course);
+
+    // Slanje odgovora klijentu sa statusom 200
     res.json({ success: true, message: "Kurs uspešno ažuriran." });
   } catch (error) {
+    // Ako dođe do greške prilikom ažuriranja kursa
     console.error("Greška prilikom ažuriranja kursa:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Došlo je do greške prilikom ažuriranja kursa.",
-      });
+    // Slanje odgovora sa statusom 500 i informacijom o grešci
+    res.status(500).json({
+      success: false,
+      error: "Došlo je do greške prilikom ažuriranja kursa.",
+    });
   }
 });
+
+// router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
+//   const courseId = req.params.courseId;
+//   const updatedCourseData = req.body;
+
+//   try {
+//     // Ispis primljene JSON datoteke u konzolu
+//     console.log("Primljena JSON datoteka:", updatedCourseData);
+
+//     // Pronalaženje kursa po ID-ju
+//     const course = await Course.findById(courseId);
+
+//     if (!course) {
+//       return res.status(404).json({ error: "Kurs nije pronađen." });
+//     }
+
+//     // Ažuriranje kursa sa novim podacima
+//     Object.keys(updatedCourseData).forEach((key) => {
+//       course[key] = updatedCourseData[key];
+//     });
+
+//     // Spajanje stringova za literaturu
+//     if (Array.isArray(updatedCourseData.literature)) {
+//       course.literature = updatedCourseData.literature.join(", ");
+//     }
+
+//     // Čuvanje ažuriranog kursa
+//     await course.save();
+
+//     // Ispis uspešnog ažuriranja u konzolu
+//     console.log("Kurs uspešno ažuriran:", course);
+
+//     // Slanje odgovora klijentu
+//     res.json({ success: true, message: "Kurs uspešno ažuriran." });
+//   } catch (error) {
+//     console.error("Greška prilikom ažuriranja kursa:", error);
+//     res.status(500).json({
+//       success: false,
+//       error: "Došlo je do greške prilikom ažuriranja kursa.",
+//     });
+//   }
+// });
+
+// router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
+//   const courseId = req.params.courseId;
+//   const updatedCourseData = req.body;
+
+//   try {
+//     // Pronalaženje kursa po ID-ju
+//     const course = await Course.findById(courseId);
+
+//     if (!course) {
+//       return res.status(404).json({ error: "Kurs nije pronađen." });
+//     }
+
+//     // Ažuriranje kursa sa novim podacima
+//     Object.keys(updatedCourseData).forEach((key) => {
+//       course[key] = updatedCourseData[key];
+//     });
+
+//     // Spajanje stringova za literaturu
+//     if (Array.isArray(updatedCourseData.literature)) {
+//       course.literature = updatedCourseData.literature.join(", ");
+//     }
+
+//     // Čuvanje ažuriranog kursa
+//     await course.save();
+
+//     res.json({ success: true, message: "Kurs uspešno ažuriran." });
+//   } catch (error) {
+//     console.error("Greška prilikom ažuriranja kursa:", error);
+//     res
+//       .status(500)
+//       .json({
+//         success: false,
+//         error: "Došlo je do greške prilikom ažuriranja kursa.",
+//       });
+//   }
+// });
 
 router.route("/api/courses/delete").post(async (req, res) => {
   const { courseIds } = req.body;
 
   try {
-    const deletedCourses = await Course.deleteMany({ _id: { $in: courseIds } }).exec();
+    const deletedCourses = await Course.deleteMany({
+      _id: { $in: courseIds },
+    }).exec();
 
     if (!deletedCourses) {
       return res.status(404).json({ error: "No courses found" });
