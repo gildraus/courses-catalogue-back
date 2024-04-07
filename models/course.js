@@ -30,7 +30,7 @@ let Course = new Schema({
     default: [],
   },
   year_of_study: {
-    type: [String],
+    type: String,
   },
 
   lecturers: {
@@ -65,7 +65,7 @@ let Course = new Schema({
   description: {
     type: String,
   },
-  content: {
+  note: {
     type: String,
   },
   tags: {
