@@ -272,6 +272,7 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
       link,
       video,
       status,
+      espb,
     } = req.body;
 
     const course = new Course({
@@ -293,6 +294,7 @@ router.post("/api/courses", authenticateToken, async (req, res) => {
       link,
       video,
       status,
+      espb,
     });
 
     await course.save();
@@ -420,7 +422,7 @@ router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
     course.semester = updatedCourseData.semester;
     course.level_of_study = updatedCourseData.levelOfStudy; // Ispravljeno
     course.program = updatedCourseData.program;
-    course.modules = updatedCourseData.module;
+    course.modules = updatedCourseData.modules;
     course.departments = updatedCourseData.departments;
     course.year_of_study = updatedCourseData.yearOfStudy;
     course.lecturers = updatedCourseData.lecturers;
