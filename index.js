@@ -37,7 +37,7 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-mongoose.connect("mongodb://10.10.171.102:27017/courses-catalogue");
+mongoose.connect("mongodb+srv://admin:admin@cluster0.3qxgdoi.mongodb.net/");
 
 const conn = mongoose.connection;
 
