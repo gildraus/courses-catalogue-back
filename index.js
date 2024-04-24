@@ -36,7 +36,7 @@ const port = 3001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
+//connection string 
 mongoose.connect("mongodb+srv://admin:admin@cluster0.3qxgdoi.mongodb.net/courses-catalogue");
 
 
