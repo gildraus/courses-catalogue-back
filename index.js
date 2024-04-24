@@ -29,7 +29,7 @@ app.use(cors(corsOptions));
 
 //Root route
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Server je pokrenut :)");
 });
 
 const port = 3001;
