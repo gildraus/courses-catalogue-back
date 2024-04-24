@@ -16,7 +16,11 @@ const app = express();
 
 //  ovo sam sve premestio u vercel.json trebalo bi da radi tamo
 const corsOptions = {
-  origin: ["https://katalogpredmeta.fon.bg.ac.rs", "http://localhost:3000"],
+  origin: [
+    "https://courses-catalogue-front.vercel.app",
+    "https://katalogpredmeta.fon.bg.ac.rs",
+    "http://localhost:3000",
+  ],
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
@@ -36,9 +40,10 @@ const port = 3001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-//connection string 
-mongoose.connect("mongodb+srv://admin:admin@cluster0.3qxgdoi.mongodb.net/courses-catalogue");
-
+//connection string
+mongoose.connect(
+  "mongodb+srv://admin:admin@cluster0.3qxgdoi.mongodb.net/courses-catalogue"
+);
 
 const conn = mongoose.connection;
 
