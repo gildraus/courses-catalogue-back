@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Session = require("./session");
 
 const Schema = mongoose.Schema;
 
@@ -13,8 +14,9 @@ let Course = new Schema({
   level_of_study: {
     type: String,
   },
-  program: {
-    type: String,
+  programs: {
+    type: [String],
+    default: [],
   },
   modules: {
     type: [String],
@@ -42,15 +44,6 @@ let Course = new Schema({
     type: String,
   },
 
-  lecture_session_time: {
-    type: [String],
-    default: [],
-  },
-  exercise_session_time: {
-    type: [String],
-    default: [],
-  },
-
   literature: {
     type: [String],
     default: [],
@@ -76,6 +69,12 @@ let Course = new Schema({
   status: {
     type: String,
   },
+  sessions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Session",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Course", Course, "courses6.0");
