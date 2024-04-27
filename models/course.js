@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Session = require("./session");
 
 const Schema = mongoose.Schema;
 
@@ -69,12 +68,7 @@ let Course = new Schema({
   status: {
     type: String,
   },
-  sessions: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Session",
-    },
-  ],
+
 });
 
-module.exports = mongoose.model("Course", Course, "courses6.0");
+module.exports = mongoose.model("Course", Course, "courses7.0");
