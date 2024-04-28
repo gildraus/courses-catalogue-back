@@ -9,6 +9,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const authenticateToken = require("./authentication/authController");
+const Session = require("./models/session");
+
 
 const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
@@ -184,74 +186,7 @@ router.route("/levelsofstudy").get((req, res) => {
       res.status(500).send("Error occured while fetching levelsOfStudy");
     });
 });
-//ovo mora opet da se radi jer je previse toga izbaceno
-// router.post("/api/courses", authenticateToken, async (req, res) => {
-//   try {
-//     const {
-//       courseID,
-//       acc,
-//       semester,
-//       studies,
-//       name,
-//       levelOfStudy,
-//       moduleItems,
-//       departmentItems,
-//       yearOfStudyItems,
-//       status,
-//       espb,
-//       typeOfExam,
-//       typeOfLecture,
-//       lecturerItems,
-//       lectureSessionTimeItems,
-//       exerciseSessionTimeItems,
-//       preconditionItems,
-//       periodicity,
-//       abstract,
-//       content,
-//       objective,
-//       note,
-//       literatureItems,
-//       tagItems,
-//       restrictionItems,
-//       link,
-//       video,
-//     } = req.body;
-//     const course = new Course({
-//       course_id: courseID,
-//       accreditation: acc,
-//       name: name,
-//       semester: semester,
-//       level_of_study: levelOfStudy,
-//       studies: studies,
-//       modules: moduleItems,
-//       departments: departmentItems,
-//       year_of_study: yearOfStudyItems,
-//       lecturers: lecturerItems,
-//       espb: espb,
-//       periodicity: periodicity,
-//       type_of_exam: typeOfExam,
-//       type_of_lecture: typeOfLecture,
-//       preconditions: preconditionItems,
-//       lecture_session_time: lectureSessionTimeItems,
-//       exercise_session_time: exerciseSessionTimeItems,
-//       abstract: abstract,
-//       objective: objective,
-//       content: content,
-//       literature: literatureItems,
-//       link: link,
-//       video: video,
-//       note: note,
-//       tags: tagItems,
-//       restrictions: restrictionItems,
-//       status: status,
-//     });
-//     console.log(course);
-//     await course.save();
-//     res.status(201).json(course);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to save the course" });
-//   }
-// });
+
 router.post("/api/courses", authenticateToken, async (req, res) => {
   try {
     const {
@@ -379,6 +314,7 @@ router
       }
 
       res.json(course);
+      console.log("api zahtev je prosao")
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Server error" });
@@ -457,84 +393,6 @@ router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
   }
 });
 
-// router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
-//   const courseId = req.params.courseId;
-//   const updatedCourseData = req.body;
-
-//   try {
-//     // Ispis primljene JSON datoteke u konzolu
-//     console.log("Primljena JSON datoteka:", updatedCourseData);
-
-//     // Pronalaženje kursa po ID-ju
-//     const course = await Course.findById(courseId);
-
-//     if (!course) {
-//       return res.status(404).json({ error: "Kurs nije pronađen." });
-//     }
-
-//     // Ažuriranje kursa sa novim podacima
-//     Object.keys(updatedCourseData).forEach((key) => {
-//       course[key] = updatedCourseData[key];
-//     });
-
-//     // Spajanje stringova za literaturu
-//     if (Array.isArray(updatedCourseData.literature)) {
-//       course.literature = updatedCourseData.literature.join(", ");
-//     }
-
-//     // Čuvanje ažuriranog kursa
-//     await course.save();
-
-//     // Ispis uspešnog ažuriranja u konzolu
-//     console.log("Kurs uspešno ažuriran:", course);
-
-//     // Slanje odgovora klijentu
-//     res.json({ success: true, message: "Kurs uspešno ažuriran." });
-//   } catch (error) {
-//     console.error("Greška prilikom ažuriranja kursa:", error);
-//     res.status(500).json({
-//       success: false,
-//       error: "Došlo je do greške prilikom ažuriranja kursa.",
-//     });
-//   }
-// });
-
-// router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
-//   const courseId = req.params.courseId;
-//   const updatedCourseData = req.body;
-
-//   try {
-//     // Pronalaženje kursa po ID-ju
-//     const course = await Course.findById(courseId);
-
-//     if (!course) {
-//       return res.status(404).json({ error: "Kurs nije pronađen." });
-//     }
-
-//     // Ažuriranje kursa sa novim podacima
-//     Object.keys(updatedCourseData).forEach((key) => {
-//       course[key] = updatedCourseData[key];
-//     });
-
-//     // Spajanje stringova za literaturu
-//     if (Array.isArray(updatedCourseData.literature)) {
-//       course.literature = updatedCourseData.literature.join(", ");
-//     }
-
-//     // Čuvanje ažuriranog kursa
-//     await course.save();
-
-//     res.json({ success: true, message: "Kurs uspešno ažuriran." });
-//   } catch (error) {
-//     console.error("Greška prilikom ažuriranja kursa:", error);
-//     res
-//       .status(500)
-//       .json({
-//         success: false,
-//         error: "Došlo je do greške prilikom ažuriranja kursa.",
-//       });
-//   }
-// });
 
 router.route("/api/courses/delete").post(async (req, res) => {
   const { courseIds } = req.body;
@@ -554,5 +412,26 @@ router.route("/api/courses/delete").post(async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+router.route("/api/sessions").get(async (req, res) => {
+  const { selectedProgram, selectedModule, name } = req.query;
+
+  const query = {
+    program: selectedProgram,
+    module: selectedModule,
+    name: name,
+  };
+
+  try {
+    const sessions = await Session.find(query).exec();
+
+    res.json(sessions);
+    console.log("sesije: " + sessions);
+  } catch (error) {
+    console.error("Error fetching sessions:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 app.use("/", router);
