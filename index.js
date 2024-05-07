@@ -11,7 +11,6 @@ const cookieParser = require("cookie-parser");
 const authenticateToken = require("./authentication/authController");
 const Session = require("./models/session");
 
-
 const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
@@ -32,15 +31,14 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
 
-
 //Root route
 app.get("/", (req, res) => {
-  res.send("Server je pokrenut :)");
+  res.send("Server is running :)");
 });
 
 const port = 3001;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server is live on port: ${port}`);
 });
 //connection string
 mongoose.connect(
@@ -50,7 +48,7 @@ mongoose.connect(
 const conn = mongoose.connection;
 
 conn.once("open", () => {
-  console.log("mongo open");
+  console.log("MongoDB connection is open. ");
 });
 
 const router = express.Router();
@@ -58,7 +56,6 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 router.route("/courses").get((req, res) => {
-  console.log("radi");
   Course.find({})
     .exec()
     .then((courses) => {
@@ -286,7 +283,6 @@ router.route("/login").post(async (req, res) => {
       const token = jwt.sign({ userId: user._id }, "your-secret-key", {
         expiresIn: "1h",
       });
-      console.log("token glasi ovako " + token);
       res.json({ access_token: token });
     } else {
       return res.status(401).json({ error: "Invalid password" });
@@ -314,7 +310,7 @@ router
       }
 
       res.json(course);
-      console.log("api zahtev je prosao")
+      console.log("api zahtev je prosao");
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Server error" });
@@ -343,30 +339,24 @@ router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
   const updatedCourseData = req.body; // Dobijanje ažuriranih podataka o kursu iz tela zahteva
 
   try {
-    // Ispis ažuriranih podataka o kursu u konzolu
-    console.log("Primljena JSON datoteka:", updatedCourseData);
-
-    // Pronalaženje kursa po ID-ju
     const course = await Course.findById(courseId);
 
     if (!course) {
-      // Ako kurs nije pronađen, vraćamo odgovor sa statusom 404
-      return res.status(404).json({ error: "Kurs nije pronađen." });
+      return res.status(404).json({ error: "Course-to-update not found." });
     }
 
-    // Ažuriranje kursa sa novim podacima
     course.name = updatedCourseData.name;
     course.semester = updatedCourseData.semester;
-    course.level_of_study = updatedCourseData.levelOfStudy; // Ispravljeno
+    course.level_of_study = updatedCourseData.levelOfStudy;
     course.program = updatedCourseData.program;
     course.modules = updatedCourseData.modules;
     course.departments = updatedCourseData.departments;
     course.year_of_study = updatedCourseData.yearOfStudy;
     course.lecturers = updatedCourseData.lecturers;
     course.espb = updatedCourseData.espb;
-    course.lecture_session_time = updatedCourseData.lectureSessionTimes; // Ispravljeno
-    course.exercise_session_time = updatedCourseData.exerciseSessionTimes; // Ispravljeno
-    course.literature = updatedCourseData.literatures; // Ispravljeno
+    course.lecture_session_time = updatedCourseData.lectureSessionTimes;
+    course.exercise_session_time = updatedCourseData.exerciseSessionTimes;
+    course.literature = updatedCourseData.literatures;
     course.link = updatedCourseData.link;
     course.video = updatedCourseData.video;
     course.description = updatedCourseData.description;
@@ -374,25 +364,19 @@ router.put("/api/courses/:courseId", authenticateToken, async (req, res) => {
     course.tags = updatedCourseData.tags;
     course.status = updatedCourseData.status;
 
-    // Čuvanje ažuriranog kursa
     await course.save();
 
-    // Ispis uspešnog ažuriranja u konzolu
-    console.log("Kurs uspešno ažuriran:", course);
+    console.log("Course updated successfully:", course);
 
-    // Slanje odgovora klijentu sa statusom 200
-    res.json({ success: true, message: "Kurs uspešno ažuriran." });
+    res.json({ success: true, message: "Course updated successfully" });
   } catch (error) {
-    // Ako dođe do greške prilikom ažuriranja kursa
-    console.error("Greška prilikom ažuriranja kursa:", error);
-    // Slanje odgovora sa statusom 500 i informacijom o grešci
+    console.error("Error during course update:", error);
     res.status(500).json({
       success: false,
-      error: "Došlo je do greške prilikom ažuriranja kursa.",
+      error: "There is an error during course update.",
     });
   }
 });
-
 
 router.route("/api/courses/delete").post(async (req, res) => {
   const { courseIds } = req.body;
@@ -426,12 +410,10 @@ router.route("/api/sessions").get(async (req, res) => {
     const sessions = await Session.find(query).exec();
 
     res.json(sessions);
-    console.log("sesije: " + sessions);
   } catch (error) {
     console.error("Error fetching sessions:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
-
 
 app.use("/", router);
