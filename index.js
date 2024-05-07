@@ -11,6 +11,8 @@ const cookieParser = require("cookie-parser");
 const authenticateToken = require("./authentication/authController");
 const Session = require("./models/session");
 
+
+
 const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
@@ -134,9 +136,7 @@ router.route("/filteredCourses").get(async (req, res) => {
 
   try {
     const courses = await Course.find(query).exec();
-    console.log(
-      query.level_of_study + " " + query.program + " " + query.modules
-    );
+   
     res.json(courses);
   } catch (err) {
     console.error(err);
@@ -145,7 +145,7 @@ router.route("/filteredCourses").get(async (req, res) => {
 });
 
 router.route("/departments").get((req, res) => {
-  console.log("radi");
+  console.log("Departments fetch working.");
   Department.find({})
     .exec()
     .then((departments) => {
@@ -158,7 +158,7 @@ router.route("/departments").get((req, res) => {
 });
 
 router.route("/modules").get((req, res) => {
-  console.log("radi modules");
+  console.log("Modules fetch working.");
   Module.find({})
     .exec()
     .then((modules) => {
@@ -171,12 +171,11 @@ router.route("/modules").get((req, res) => {
 });
 
 router.route("/levelsofstudy").get((req, res) => {
-  console.log("radi levelsofstudy");
+  console.log("Levels of study fetch working.");
   LevelOfStudy.find({})
     .exec()
     .then((levelsOfStudy) => {
       res.json(levelsOfStudy);
-      console.log(levelsOfStudy);
     })
     .catch((err) => {
       console.log(err);
@@ -262,7 +261,6 @@ router.route("/api/tags/:query").get((req, res) => {
       res.json(tags);
     })
     .catch((err) => {
-      console.log("back greska");
       console.error(err);
       return res.status(500).json({ error: "Server error" });
     });
@@ -294,7 +292,7 @@ router.route("/login").post(async (req, res) => {
 });
 
 router.route("/protected-route").get(authenticateToken, (req, res) => {
-  console.log("uspesan pristup");
+  console.log("Successfull authentication.");
 });
 
 router
@@ -310,7 +308,7 @@ router
       }
 
       res.json(course);
-      console.log("api zahtev je prosao");
+      console.log("Course successfully fetched!");
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Server error" });
