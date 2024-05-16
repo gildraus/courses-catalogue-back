@@ -395,23 +395,46 @@ router.route("/api/courses/delete").post(async (req, res) => {
   }
 });
 
-router.route("/api/sessions").get(async (req, res) => {
-  const { selectedProgram, selectedModule, name } = req.query;
+// router.route("/api/sessions").get(async (req, res) => {
+//   const { selectedProgram, selectedModule, level_of_study, name } = req.query;
 
-  const query = {
-    program: selectedProgram,
-    module: selectedModule,
-    name: name,
-  };
+//   const query = {
+//     program: selectedProgram,
+//     module: selectedModule,
+//     level_of_study: level_of_study,
+//     name: name,
+//   };
+
+//   try {
+//     const sessions = await Session.find(query).exec();
+
+//     res.json(sessions);
+//   } catch (error) {
+//     console.error("Error fetching sessions:", error);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// });
+
+router.route("/api/sessions").get(async (req, res) => {
+  const { selectedProgram, selectedModule, level_of_study, name } = req.query;
+
+  // Initialize the query object
+  let query = { name: name };
+
+  // If the level_of_study is not "Основне академске студије", include program and module in the query
+  if (level_of_study !== "Основне академске студије") {
+    query.program = selectedProgram;
+    query.module = selectedModule;
+  }
 
   try {
     const sessions = await Session.find(query).exec();
-
     res.json(sessions);
   } catch (error) {
     console.error("Error fetching sessions:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 app.use("/", router);
