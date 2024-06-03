@@ -77,6 +77,7 @@ router.route("/filteredCourses").get(async (req, res) => {
     selectedSemester,
     selectedYearOfStudy,
     selectedDepartments,
+    tagsToSearch,
   } = req.query;
 
   const query = {};
@@ -133,10 +134,17 @@ router.route("/filteredCourses").get(async (req, res) => {
       query.departments = { $regex: selectedDepartments, $options: "i" };
     }
   }
+  if (tagsToSearch) {
+    if (Array.isArray(tagsToSearch)) {
+      query.tags = { $in: tagsToSearch };
+    } else {
+      query.tags = { $regex: tagsToSearch, $options: "i" };
+    }
+  }
 
   try {
     const courses = await Course.find(query).exec();
-   
+
     res.json(courses);
   } catch (err) {
     console.error(err);
