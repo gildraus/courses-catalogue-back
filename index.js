@@ -81,7 +81,7 @@ router.route("/filteredCourses").get(async (req, res) => {
   } = req.query;
 
   const query = {};
-
+ 
   if (selectedLevelOfStudy) {
     if (Array.isArray(selectedLevelOfStudy)) {
       query.level_of_study = { $in: selectedLevelOfStudy };
@@ -92,11 +92,13 @@ router.route("/filteredCourses").get(async (req, res) => {
 
   if (selectedProgram) {
     if (Array.isArray(selectedProgram)) {
-      query.program = { $in: selectedProgram };
+      query.programs = { $in: selectedProgram };
     } else {
-      query.program = { $regex: selectedProgram, $options: "i" };
+      query.programs = { $regex: selectedProgram, $options: "i" };
     }
   }
+
+
 
   if (selectedModule) {
     if (Array.isArray(selectedModule)) {
@@ -144,7 +146,7 @@ router.route("/filteredCourses").get(async (req, res) => {
 
   try {
     const courses = await Course.find(query).exec();
-
+console.log(courses)
     res.json(courses);
   } catch (err) {
     console.error(err);

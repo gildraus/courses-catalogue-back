@@ -71,4 +71,4 @@ let Course = new Schema({
 
 });
 
-module.exports = mongoose.model("Course", Course, "courses8.0");
+module.exports = mongoose.model("Course", Course, "courses9.0");
