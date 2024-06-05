@@ -68,7 +68,9 @@ let Course = new Schema({
   status: {
     type: String,
   },
-
+  thumbnail_url: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Course", Course, "courses9.0");

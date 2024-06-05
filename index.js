@@ -11,8 +11,6 @@ const cookieParser = require("cookie-parser");
 const authenticateToken = require("./authentication/authController");
 const Session = require("./models/session");
 
-
-
 const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
 const app = express();
@@ -81,7 +79,7 @@ router.route("/filteredCourses").get(async (req, res) => {
   } = req.query;
 
   const query = {};
- 
+
   if (selectedLevelOfStudy) {
     if (Array.isArray(selectedLevelOfStudy)) {
       query.level_of_study = { $in: selectedLevelOfStudy };
@@ -97,8 +95,6 @@ router.route("/filteredCourses").get(async (req, res) => {
       query.programs = { $regex: selectedProgram, $options: "i" };
     }
   }
-
-
 
   if (selectedModule) {
     if (Array.isArray(selectedModule)) {
@@ -146,7 +142,6 @@ router.route("/filteredCourses").get(async (req, res) => {
 
   try {
     const courses = await Course.find(query).exec();
-console.log(courses)
     res.json(courses);
   } catch (err) {
     console.error(err);
@@ -445,6 +440,5 @@ router.route("/api/sessions").get(async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
 
 app.use("/", router);
