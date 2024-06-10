@@ -10,6 +10,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const authenticateToken = require("./authentication/authController");
 const Session = require("./models/session");
+const toLatin = require("cyrillic-to-latin");
+
 
 const jwt = require("jsonwebtoken");
 const authToken = require("./authentication/authenticateToken");
@@ -55,11 +57,35 @@ const router = express.Router();
 
 router.use(bodyParser.json());
 
+
+
 router.route("/courses").get((req, res) => {
+  const lang = req.query.script;
   Course.find({})
     .exec()
     .then((courses) => {
-      res.json(courses);
+      if (lang === "Ћирилица") {
+
+        res.json(courses);
+      } else {
+        const convertedData = courses.map(item => ({
+          ...item._doc,
+          name: toLatin(item.name),
+          level_of_study: toLatin(item.level_of_study),
+          programs: item.programs.map(program => toLatin(program)),
+          modules: item.modules.map(module => toLatin(module)),
+          semester: toLatin(item.semester),
+          departments: item.departments.map(department => toLatin(department)),
+          year_of_study: toLatin(item.year_of_study),
+          lecturers: item.lecturers.map(lecturer => toLatin(lecturer)),
+          literature: item.literature.map(book => toLatin(book)),
+          description: toLatin(item.description),
+          note: toLatin(item.note),
+          status: toLatin(item.status),
+        }));
+        res.json(convertedData);
+
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -68,6 +94,7 @@ router.route("/courses").get((req, res) => {
 });
 
 router.route("/filteredCourses").get(async (req, res) => {
+  const lang = req.query.script;
   const {
     selectedLevelOfStudy,
     selectedProgram,
@@ -141,8 +168,32 @@ router.route("/filteredCourses").get(async (req, res) => {
   }
 
   try {
-    const courses = await Course.find(query).exec();
-    res.json(courses);
+    const courses = await Course.find(query).exec().then(
+      (courses) => {
+        if (lang === "Ћирилица") {
+
+          res.json(courses);
+        } else {
+          const convertedData = courses.map(item => ({
+            ...item._doc,
+            name: toLatin(item.name),
+            level_of_study: toLatin(item.level_of_study),
+            programs: item.programs.map(program => toLatin(program)),
+            modules: item.modules.map(module => toLatin(module)),
+            semester: toLatin(item.semester),
+            departments: item.departments.map(department => toLatin(department)),
+            year_of_study: toLatin(item.year_of_study),
+            lecturers: item.lecturers.map(lecturer => toLatin(lecturer)),
+            literature: item.literature.map(book => toLatin(book)),
+            description: toLatin(item.description),
+            note: toLatin(item.note),
+            status: toLatin(item.status),
+          }));
+          res.json(convertedData);
+
+        }
+      }
+    );
   } catch (err) {
     console.error(err);
     // Handle the error
@@ -154,6 +205,7 @@ router.route("/departments").get((req, res) => {
   Department.find({})
     .exec()
     .then((departments) => {
+
       res.json(departments);
     })
     .catch((err) => {
@@ -175,6 +227,7 @@ router.route("/modules").get((req, res) => {
     });
 });
 
+
 router.route("/levelsofstudy").get((req, res) => {
   console.log("Levels of study fetch working.");
   LevelOfStudy.find({})
@@ -187,6 +240,7 @@ router.route("/levelsofstudy").get((req, res) => {
       res.status(500).send("Error occured while fetching levelsOfStudy");
     });
 });
+
 
 router.post("/api/courses", authenticateToken, async (req, res) => {
   try {
@@ -304,15 +358,35 @@ router
   .route("/api/courses/:courseId")
   .get(async (req, res) => {
     const courseId = req.params.courseId;
-
+    const lang = req.query.script || "Ћирилица";
+    console.log('vani ' + lang)
     try {
       const course = await Course.findOne({ _id: courseId }).exec();
 
       if (!course) {
         return res.status(404).json({ error: "Course not found" });
       }
+      if (lang === "Ћирилица") {
+        console.log('prvi if ' + lang)
+        res.json(course);
+      } else {
+        console.log('drgui if ' + lang)
 
-      res.json(course);
+        course.name = toLatin(course.name);
+        course.level_of_study = toLatin(course.level_of_study);
+        course.programs = course.programs.map(program => toLatin(program));
+        course.modules = course.modules.map(module => toLatin(module));
+        course.semester = toLatin(course.semester);
+        course.departments = course.departments.map(department => toLatin(department));
+        course.year_of_study = toLatin(course.year_of_study);
+        course.lecturers = course.lecturers.map(lecturer => toLatin(lecturer));
+        course.literature = course.literature.map(book => toLatin(book));
+        course.description = toLatin(course.description);
+        course.note = toLatin(course.note);
+        course.status = toLatin(course.status);
+        res.json(course)
+
+      }
       console.log("Course successfully fetched!");
     } catch (err) {
       console.error(err);
@@ -400,25 +474,6 @@ router.route("/api/courses/delete").post(async (req, res) => {
   }
 });
 
-// router.route("/api/sessions").get(async (req, res) => {
-//   const { selectedProgram, selectedModule, level_of_study, name } = req.query;
-
-//   const query = {
-//     program: selectedProgram,
-//     module: selectedModule,
-//     level_of_study: level_of_study,
-//     name: name,
-//   };
-
-//   try {
-//     const sessions = await Session.find(query).exec();
-
-//     res.json(sessions);
-//   } catch (error) {
-//     console.error("Error fetching sessions:", error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
 
 router.route("/api/sessions").get(async (req, res) => {
   const { selectedProgram, selectedModule, level_of_study, name } = req.query;
