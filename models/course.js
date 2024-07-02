@@ -73,4 +73,4 @@ let Course = new Schema({
   },
 });
 
-module.exports = mongoose.model("Course", Course, "courses10.0");
+module.exports = mongoose.model("Course", Course, "courses11.0");
